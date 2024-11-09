@@ -9,7 +9,7 @@ import re
 
 
 def filter_datum(fields: List[str], redaction: str, message: str,
-                 separator: str):
+                 separator: str) -> str:
     """ Returns a log message obfuscated"""
     fields_str = ('|').join(fields)
     return re.sub(rf"({fields_str})=[^{separator}]+", rf"\1={redaction}",
