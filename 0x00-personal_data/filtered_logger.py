@@ -38,7 +38,6 @@ def filter_datum(fields: List[str], redaction: str, message: str,
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
     """
-
     REDACTION = "***"
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
@@ -50,7 +49,6 @@ class RedactingFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         """ Filters values in incoming records """
         message = record.getMessage()
-        obfuscated_record = filter_datum(self.fields, self.REDACTION, message,
-                                         self.SEPARATOR)
-        record.msg = obfuscated_record
+        record.msg = filter_datum(self.fields, self.REDACTION, message,
+                                  self.SEPARATOR)
         return super().format(record)
