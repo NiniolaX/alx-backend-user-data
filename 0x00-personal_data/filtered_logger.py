@@ -77,7 +77,7 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db() -> mysql.connector.connection.MySQLConnect:
+def get_db() -> mysql.connector.connection.MySQLConnection:
     """ Returns a database connector """
     # Get database configurations
     db = environ.get("PERSONAL_DATA_DB_NAME")
