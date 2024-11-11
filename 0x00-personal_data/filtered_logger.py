@@ -8,8 +8,13 @@ Classes:
     RedactingFormatter
 """
 import logging
+import mysql.connector
 import re
+from os import environ
 from typing import List
+
+
+PII_FIELDS = ("email", "phone", "ssn", "password", "ip")
 
 
 def filter_datum(fields: List[str], redaction: str, message: str,
@@ -52,3 +57,36 @@ class RedactingFormatter(logging.Formatter):
         record.msg = filter_datum(self.fields, self.REDACTION, message,
                                   self.SEPARATOR)
         return super().format(record)
+
+
+def get_logger() -> logging.Logger:
+    """ Returns a custom logger """
+    # Create logger
+    logger = logging.getLogger('user_data')
+    logger.setLevel(logging.INFO)
+    logger.propagate = False  # Prevent propagation to other handlers
+
+    # Create and configure handler
+    handler = logging.StreamHandler()
+    formatter = RedactingFormatter(PII_FIELDS)
+    handler.setFormatter(formatter)
+
+    # Add handler to logger
+    logger.addHandler(handler)
+
+    return logger
+
+
+def get_db() -> mysql.connector.connection.MySQLConnect:
+    """ Returns a database connector """
+    # Get database configurations
+    db = environ.get("PERSONAL_DATA_DB_NAME")
+    user = environ.get("PERSONAL_DATA_DB_USERNAME", "root")
+    password = environ.get("PERSONAL_DATA_DB_PASSWORD", "")
+    host = environ.get("PERSONAL_DATA_DB_HOST", "localhost")
+
+    # Connect to database
+    connector = mysql.connector.connect(database=db, user=user,
+                                        password=password, host=host)
+
+    return connector
