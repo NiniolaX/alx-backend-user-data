@@ -6,7 +6,7 @@ Functions:
     is_valid: Validates that a provided password matches a given hashed
               password
 """
-from bcrypt import checkpw, hashpw, gensalt
+import bcrypt
 
 
 def hash_password(password: str) -> bytes:
@@ -18,8 +18,8 @@ def hash_password(password: str) -> bytes:
     """
     if not password:
         return b""
-    salt = gensalt()
-    return hashpw(password.encode('utf-8'), salt)
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password.encode('utf-8'), salt)
 
 
 def is_valid(hashed_password: bytes, password: str) -> bool:
@@ -34,4 +34,4 @@ def is_valid(hashed_password: bytes, password: str) -> bool:
     """
     if not hashed_password or not password:
         return False
-    return checkpw(password.encode('utf-8'), hashed_password)
+    return bcrypt.checkpw(password.encode('utf-8'), hashed_password)
