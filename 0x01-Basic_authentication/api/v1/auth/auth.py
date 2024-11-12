@@ -18,7 +18,19 @@ class Auth():
         Return:
             (bool): True if authorization is required, otherwise, False.
         """
-        return False
+        if not path or not excluded_paths:
+            return True
+        if len(excluded_paths) == 0:
+            return True
+
+        # Normalized path
+        normalized_path = path.rstrip('/')
+        for exluded_path in excluded_paths:
+            # Check if the normalized path matches the excluded path
+            if exluded_path.rstrip('/') == normalized_path:
+                return False
+
+        return True
 
     def authorization_header(self, request=None) -> str:
         """ Retrieve authorization header from request
