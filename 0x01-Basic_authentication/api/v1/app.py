@@ -15,10 +15,14 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
 auth = None
 
-AUTH_TYPE = os.getenv("AUTH_TYPE", None)
-if AUTH_TYPE:
+# Initialize auth instance based on environment variable 'AUTH_TYPE'
+auth_type = os.getenv("AUTH_TYPE")
+if auth_type == 'auth':
     from api.v1.auth.auth import Auth
     auth = Auth()
+elif auth_type == 'basic_auth':
+    from api.v1.auth.basic_auth import BasicAuth
+    auth = BasicAuth()
 
 
 @app.before_request
@@ -27,16 +31,22 @@ def before_request() -> str:
     if not auth:
         return
 
+    # Paths excluded from authentication
     excluded_paths = ['/api/v1/status/',
                       '/api/v1/unauthorized/',
                       '/api/v1/forbidden/']
+
     auth_status = auth.require_auth(request.path, excluded_paths)
+
+    # Do nothing if authentication is not required
     if not auth_status:
         return
 
+    # Proceed to check for `Authorization` header
     if not auth.authorization_header(request):
         abort(401)
 
+    # Authorize user
     if not auth.current_user(request):
         abort(403)
 

@@ -9,14 +9,21 @@ from typing import List, TypeVar
 class Auth():
     """ Template for API authentication system """
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """ Checks if authorization is required for a given path
+        """ Checks if authentication is required for a given path.
+
+        Compares a path with a list of paths which are excluded from
+        authentication.
+        - If `path` is present in `excluded_paths`, False is returned
+        indicating that path is excluded.
+        - If `path` is not present in `excluded_paths`, True is
+        returned indicating that path is not excluded from auth.
 
         Args:
-            path(str): Path to check
-            excluded_paths(list of str): List of paths requiring authorization
+            path(str): Path to validate
+            excluded_paths(list of str): Paths excluded from authentication
 
         Return:
-            (bool): True if authorization is required, otherwise, False.
+            (bool): True if authentication is required, otherwise, False.
         """
         if not path or not excluded_paths:
             return True
