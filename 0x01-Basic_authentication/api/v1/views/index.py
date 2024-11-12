@@ -31,3 +31,10 @@ def test_401() -> str:
     """ Tests the 401 error handler
     """
     abort(401)
+
+
+@app_views.route('forbidden', strict_slashes=False)
+def test_403() -> str:
+    """ Tests the 403 error handler
+    """
+    abort(403)
