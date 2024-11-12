@@ -112,8 +112,8 @@ def main() -> None:
                        + f"ssn={row[3]};password={row[4]};ip={row[5]};"
                        + f"last_login={row[6]};user_agent={row[7]}")
             logger.info(message)
-    except:
-        logger.exception("An error has occured")
+    except Exception as e:
+        logger.exception({e})
     finally:
         # Close db connection
         cursor.close()
