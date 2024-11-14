@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 """
 Manages API authentication
+
+Classes:
+    Auth: Template for API authentication system
+
+Functions:
+    session_cookie: Returns a cookie value from a request
 """
 from flask import request
+from os import getenv
 from typing import List, TypeVar
 
 
@@ -67,3 +74,23 @@ class Auth():
             (obj): User object
         """
         return
+
+    def session_cookie(self, request=None):
+        """ Returns a cookie value from a request
+
+        Args:
+            request(obj): Request object
+
+        Returns:
+            (str): Value of the cookie
+        """
+        if not request:
+            return
+
+        cookie_name = getenv('SESSION_NAME', '_my_session_id')
+        if not cookie_name:
+            return
+
+        cookie_data = request.cookies.get(cookie_name)
+
+        return cookie_data
