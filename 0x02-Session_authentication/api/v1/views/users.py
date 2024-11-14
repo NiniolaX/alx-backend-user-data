@@ -132,8 +132,8 @@ def update_user(user_id: str = None) -> str:
 @app_views.route('/users/me', methods=['GET'], strict_slashes=False)
 def return_current_user():
     """ Returns the current user """
-    me = request.current_user
-    if not me:
+    current_user = request.current_user
+    if not current_user:
         abort(404)
 
-    return jsonify(me.to_json()), 200
+    return jsonify(current_user.to_json()), 200
