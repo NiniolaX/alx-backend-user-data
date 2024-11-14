@@ -14,7 +14,7 @@ class SessionAuth(Auth):
         """ Creates a session for a user ID
 
         Args:
-            user_id: User ID
+            user_id(str): User ID
 
         Returns:
             (str): Newly created session's ID
@@ -26,3 +26,18 @@ class SessionAuth(Auth):
         self.user_id_by_session_id[session_id] = user_id
 
         return session_id
+
+    def user_id_for_session_id(self, session_id: str = None) -> str:
+        """ Returns a user ID based on a session ID
+
+        Args:
+            session_id(str): Session ID
+
+        Returns:
+            (str): User ID associated with session ID
+        """
+        if not isinstance(session_id, str):
+            return
+        user_id = self.user_id_by_session_id.get(session_id)
+
+        return user_id
