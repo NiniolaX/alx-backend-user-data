@@ -2,9 +2,11 @@
 """
 Handles Basic Authentication
 """
-from api.v1.auth.auth import Auth
-from typing import Tuple
 import base64
+from api.v1.auth.auth import Auth
+from models.base import DATA
+from models.user import User
+from typing import Tuple, TypeVar
 
 
 class BasicAuth(Auth):
@@ -81,3 +83,31 @@ class BasicAuth(Auth):
             return email, password
         except Exception:
             return None, None
+
+    def user_object_from_credentials(self,
+                                     user_email: str,
+                                     user_pwd: str) -> TypeVar('User'):
+        """
+        Returns the User instance based on his email and password
+
+        Args:
+            user_email (str): User email
+            user_pwd (str): User password
+
+        Returns:
+            (obj): User object
+        """
+        if not isinstance(user_email, str) or not isinstance(user_pwd, str):
+            return
+        if not DATA:
+            return
+
+        try:
+            users = User.search({"email": user_email})
+            # Assume emails are unique, we ar extracting the first match
+            user = users[0]
+            if user.is_valid_password(user_pwd):
+                return user
+        except Exception:
+            return
+        return
