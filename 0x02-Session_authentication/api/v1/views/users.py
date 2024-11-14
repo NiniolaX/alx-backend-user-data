@@ -27,6 +27,13 @@ def view_one_user(user_id: str = None) -> str:
     """
     if user_id is None:
         abort(404)
+
+    if user_id == 'me':
+        current_user = request.current_user
+        if not current_user:
+            abort(404)
+        return jsonify(current_user)
+
     user = User.get(user_id)
     if user is None:
         abort(404)
@@ -125,4 +132,8 @@ def update_user(user_id: str = None) -> str:
 @app_views.route('/users/me', methods=['GET'], strict_slashes=False)
 def return_current_user():
     """ Returns the current user """
-    return jsonify(request.current_user), 200
+    me = request.current_user
+    if not me:
+        abort(404)
+
+    return jsonify(me), 200

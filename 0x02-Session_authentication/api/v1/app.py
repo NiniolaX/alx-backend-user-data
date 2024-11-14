@@ -28,11 +28,8 @@ elif auth_type == 'basic_auth':
 @app.before_request
 def before_request() -> str:
     """ Handles filtering of all requests """
-    # Set current user
     if not auth:
         return
-
-    request.current_user = auth.current_user(request)
 
     # Paths excluded from authentication
     excluded_paths = ['/api/v1/status/',
@@ -49,7 +46,8 @@ def before_request() -> str:
     if not auth.authorization_header(request):
         abort(401)
 
-    # Authorize user
+    # Set current user if user is authenticated
+    request.current_user = auth.current_user(request)
     if not request.current_user:
         abort(403)
 
