@@ -46,12 +46,12 @@ def before_request() -> str:
     if not auth_status:
         return
 
-    # Proceed to check for `Authorization` header or session cookie
+    # Proceed to check for `Authorization` header and session cookie
     if not auth.authorization_header(request) and \
             not auth.session_cookie(request):
         abort(401)
 
-    # Set current user if user is authenticated, otherwise, abort
+    # If user is authenticated, set current user, otherwise, abort
     request.current_user = auth.current_user(request)
     if not request.current_user:
         abort(403)
