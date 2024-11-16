@@ -75,14 +75,14 @@ class Auth():
         """
         return
 
-    def session_cookie(self, request=None):
+    def session_cookie(self, request=None) -> str:
         """ Returns a cookie value from a request
 
         Args:
             request(obj): Request object
 
         Returns:
-            (str): Value of the cookie
+            (str): Value of the cookie or None
         """
         if not request:
             return
