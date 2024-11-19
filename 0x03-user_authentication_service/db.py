@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """ DB module
+
+Class:
+    DB: Handles database operations
 """
 from sqlalchemy import create_engine
 from sqlalchemy.exc import InvalidRequestError
@@ -12,7 +15,7 @@ from user import Base, User
 
 
 class DB:
-    """DB class
+    """DB class for database operations
     """
 
     def __init__(self) -> None:
