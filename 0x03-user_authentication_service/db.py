@@ -53,7 +53,7 @@ class DB:
         return user
 
     def find_user_by(self, **kwargs) -> User:
-        """ Finds a user in database by a set of arbitrary keyword arguments
+        """ Finds a user in database
 
         Args:
             kwargs: attribute to search database with
@@ -62,8 +62,9 @@ class DB:
             First match in users table
 
         Examples:
-            >>> find_user_by(email="test@hbtn.io")
-            >>> find_user_by(no_email="test2@hbtn.io")
+            >>> db = DB()
+            >>> user = db.find_user_by(email="test@hbtn.io")
+            >>> user1 = db.find_user_by(no_email="test2@hbtn.io")
         """
         try:
             user = self._session.query(User).filter_by(**kwargs).one()
@@ -72,3 +73,31 @@ class DB:
             raise
         except InvalidRequestError:
             raise
+
+    def update_user(self, user_id: int, **kwargs) -> User:
+        """ Updates a user
+
+        Args:
+            user_id (int): User int
+            kwargs (dict): attributes to update with respective values
+
+        Returns:
+            None
+
+        Examples:
+            >>> db = DB()
+            >>> db.update_user(1, hashed_password="HashedPassword1")
+        """
+        user = self.find_user_by(id=user_id)
+        if not user:
+            return
+
+        for key, value in kwargs.items():
+            try:
+                getattr(user, key)
+            except AttributeError:
+                raise ValueError
+            setattr(user, key, value)
+
+        self._session.commit()
+        return
