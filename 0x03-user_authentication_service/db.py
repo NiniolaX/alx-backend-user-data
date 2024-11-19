@@ -30,21 +30,21 @@ class DB:
         return self.__session
 
     def add_user(self, email: str, hashed_password: str) -> User:
-        """ Saves a user to the database
+        """ Adds a new user to the database
 
         Args:
             email (str): User email
             hashed_password (str): User's password (hashed)
 
         Returns:
-            New user.
+            New user
         """
-        session = self._session
         try:
             user = User(email=email, hashed_password=hashed_password)
-            session.add(user)
-            session.commit()
+            self._session.add(user)
+            self._session.commit()
         except Exception:
-            session.rollback()
+            self._session.rollback()
+            user = None
 
         return user
