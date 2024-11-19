@@ -25,7 +25,7 @@ class DB:
         """Memoized session object
         """
         if self.__session is None:
-            DBSession = sessionmaker(bind=self._engine, echo=True)
+            DBSession = sessionmaker(bind=self._engine)
             self.__session = DBSession()
         return self.__session
 
@@ -37,17 +37,14 @@ class DB:
             hashed_password (str): User's password (hashed)
 
         Returns:
-            User object.
+            New user.
         """
-        if not email or not isinstance(email, str):
-            return None
-        if not hashed_password or not isinstance(hashed_password, str):
-            return None
-
-        data = {'email': email, 'hashed_password': hashed_password}
         session = self._session
+        try:
+            user = User(email=email, hashed_password=hashed_password)
+            session.add(user)
+            session.commit()
+        except Exception:
+            session.rollback()
 
-        user = User(**data)
-        session.add(user)
-        session.commit()
         return user
