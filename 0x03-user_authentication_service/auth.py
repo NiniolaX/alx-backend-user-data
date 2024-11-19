@@ -33,6 +33,9 @@ def _hash_password(password: str) -> bytes:
 
 class Auth:
     """ Auth class to interact with the authentication database.
+
+    Methods:
+        register_user: Registers a new user
     """
     def __init__(self):
         self._db = DB()
@@ -47,17 +50,20 @@ class Auth:
         Returns:
             User object
         """
-        if not email or not isinstance(email, str):
-            raise ValueError(f"Invalid email {email}")
-        if not password or not isinstance(password, str):
-            raise ValueError(f"Invalid password")
+        if not email:
+            raise ValueError(f"Email is required")
+        if not password:
+            raise ValueError(f"Password is required")
+        if not isinstance(email, str):
+            raise TypeError(f"Invalid email: {email} not a string")
+        if not isinstance(password, str):
+            raise TypeError(f"Invalid password: <password> not a string")
 
         # Check if user already exists
         try:
             user = self._db.find_user_by(email=email)
         except NoResultFound:
             user = None
-            pass
         if user:
             raise ValueError(f"User {email} already exists")
 
