@@ -74,7 +74,7 @@ class DB:
         except InvalidRequestError:
             raise
 
-    def update_user(self, user_id: int, **kwargs) -> User:
+    def update_user(self, user_id: int, **kwargs) -> None:
         """ Updates a user
 
         Args:
