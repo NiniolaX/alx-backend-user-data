@@ -7,7 +7,8 @@ Classes:
 import bcrypt
 from db import DB
 from user import User
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 
 
 def _hash_password(password: str) -> bytes:
@@ -50,14 +51,10 @@ class Auth:
         Returns:
             User object
         """
-        if not email:
-            raise ValueError(f"Email is required")
-        if not password:
-            raise ValueError(f"Password is required")
-        if not isinstance(email, str):
-            raise TypeError(f"Invalid email: {email} not a string")
-        if not isinstance(password, str):
-            raise TypeError(f"Invalid password: <password> not a string")
+        if not email or not password:
+            raise ValueError("Email and password is required")
+        if not isinstance(email, str) or not isinstance(password, str):
+            raise ValueError("String arguments only")
 
         # Check if user already exists
         try:
@@ -72,3 +69,5 @@ class Auth:
             user = self._db.add_user(email, hashed_password)
 
             return user
+        except InvalidRequestError:
+            raise ValueError(f"Email and password is required")

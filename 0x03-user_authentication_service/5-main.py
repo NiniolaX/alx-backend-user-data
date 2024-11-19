@@ -21,4 +21,4 @@ try:
 except ValueError as err:
     print("could not create a new user: {}".format(err))
 
-auth.register_user(10, "123")
+auth.register_user({10}, "123")
