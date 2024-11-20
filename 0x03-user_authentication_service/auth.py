@@ -104,7 +104,7 @@ class Auth:
             raise ValueError(f"Email and password is required")
 
     def valid_login(self, email: str, password: str) -> bool:
-        """ Validates a user's password
+        """ Validates a user's credentials
 
         Args:
             email (str): User's email
