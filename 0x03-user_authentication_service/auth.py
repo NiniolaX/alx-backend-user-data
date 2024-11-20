@@ -50,6 +50,9 @@ class Auth:
 
         Returns:
             User object
+
+        Example:
+            >>> user = register_user("bob@hbtn.io", "pass1234")
         """
         if not email or not password:
             raise ValueError("Email and password is required")
