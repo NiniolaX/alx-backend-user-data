@@ -18,7 +18,8 @@ def _hash_password(password: str) -> bytes:
         password (str): Password to hash
 
     Returns:
-        (bytes): A salted hash of the input password
+        (bytes): A salted hash of the input password or None if no password
+            was passed.
 
     Example:
         >>> hashed_pwd = _hash_password("Password")
@@ -51,8 +52,16 @@ class Auth:
         Returns:
             User object
 
+        Raises:
+            ValueError if
+                - email already exists
+                - no email was passed
+                - no password was passed
+                - email or password is not a str
+
         Example:
-            >>> user = register_user("bob@hbtn.io", "pass1234")
+            >>> auth = Auth()
+            >>> user = auth.register_user("bob@hbtn.io", "pass1234")
         """
         if not email or not password:
             raise ValueError("Email and password is required")
@@ -74,3 +83,27 @@ class Auth:
             return user
         except InvalidRequestError:
             raise ValueError(f"Email and password is required")
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """ Validates a user's password
+
+        Args:
+            email (str): User's email
+            password (str): User's password
+
+        Returns:
+            (bool): True if valid, otherwise, False
+
+        Example:
+            >>> auth = Auth()
+            >>> auth.valid_login("bob@hbtn.io", "pass1234")
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+        except Exception:  # User not found or email of incorrect type
+            return False
+
+        if not password or not isinstance(password, str):
+            return False
+
+        return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)

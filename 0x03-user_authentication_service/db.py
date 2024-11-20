@@ -63,6 +63,10 @@ class DB:
         Returns:
             First match in users table
 
+        Raises:
+            sqlalchemy.orm.exc.NoResultFound: If no user was found
+            sqlalchemy.exc.InvalidRequestError: If invalid argument type
+
         Examples:
             >>> db = DB()
             >>> user = db.find_user_by(email="test@hbtn.io")
@@ -85,6 +89,9 @@ class DB:
 
         Returns:
             None
+
+        Raises:
+            ValueError: If attribute passed does not exist in instance
 
         Examples:
             >>> db = DB()
