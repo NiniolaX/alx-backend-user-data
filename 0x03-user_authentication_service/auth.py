@@ -36,14 +36,15 @@ def _hash_password(password: str) -> bytes:
 
     return hash
 
-def _generate_uuid() -> None:
+
+def _generate_uuid() -> str:
     """ Returns the string representation of a new UUID
 
     Args:
         None
 
     Returns:
-        None
+        (str): String representation of UUID
 
     Raises:
         None
