@@ -122,10 +122,35 @@ class Auth:
         """
         try:
             user = self._db.find_user_by(email=email)
-        except Exception:  # If user not found or email of incorrect type
+        except Exception:  # If no user is found or email of incorrect type
             return False
 
         if not password or not isinstance(password, str):
             return False
 
         return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
+
+    def create_session(self, email: str) -> str:
+        """ Creates a session for a user
+
+        Args:
+            email (str): User's email
+
+        Returns:
+            (str): session ID if successful, otherwise, None
+
+        Raises:
+            None
+
+        Example:
+            >>> auth = Auth()
+            >>> auth.create_session("bob@hbtn.io")
+            5a006849-343e-4a48-ba4e-bbd523fcca58
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+            session_id = _generate_uuid()  # Generate session ID
+            self._db.update_user(user.id, session_id=session_id)
+            return session_id
+        except NoResultFound:  # If no user is found
+            return

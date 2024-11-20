@@ -88,7 +88,7 @@ class DB:
 
         Args:
             user_id (int): User int
-            kwargs (dict): attributes to update with respective values
+            kwargs (dict): attributes to update with their respective values
 
         Returns:
             None
