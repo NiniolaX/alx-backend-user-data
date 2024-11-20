@@ -65,15 +65,28 @@ def login():
 def logout():
     """ For user logout """
     session_id = request.cookies.get('session_id')
-    if not session_id:
-        abort(403)
+    if session_id:
+        # Get associated user
+        user = AUTH.get_user_from_session_id(session_id)
+        if user:
+            # Destroy user session
+            AUTH.destroy_session(user.id)
+            return redirect(url_for('home'))
 
-    user = AUTH.get_user_from_session_id(session_id)
-    if not user:
-        abort(403)
+    abort(403)  # User not found or invalid session
 
-    AUTH.destroy_session(user.id)
-    return redirect(url_for('home'))
+
+@app.route("/profile", strict_slashes=False)
+def get_profile():
+    """ Retrieves a user's profile """
+    session_id = request.cookies.get('session_id')
+    if session_id:
+        # Get associated user
+        user = AUTH.get_user_from_session_id(session_id)
+        if user:
+            return jsonify({"email": user.email})
+
+    abort(403)  # User not found or invalid session
 
 
 if __name__ == "__main__":
