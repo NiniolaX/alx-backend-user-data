@@ -89,5 +89,39 @@ def get_profile():
     abort(403)  # User not found or invalid session
 
 
+@app.route("/reset_password", methods=['POST'], strict_slashes=False)
+def get_reset_password_token():
+    """ Returns a user's reset password token """
+    email = request.form.get('email')
+    if not email:
+        abort(403)
+
+    try:
+        reset_token = AUTH.get_reset_password_token(email)
+        return jsonify({"email": email, "reset_token": reset_token})
+    except ValueError:
+        abort(403)
+
+
+@app.route("/reset_password", methods=['PUT'], strict_slashes=False)
+def update_password():
+    """ Resets a user's password """
+    email = request.form.get('email')
+    if not email:
+        abort(403)
+
+    reset_token = request.form.get('reset_token')
+    if not reset_token:
+        abort(403)
+
+    new_password = request.form.get('new_password')
+    if not new_password:
+        abort(400)
+
+    AUTH.update_password(reset_token, new_password)
+
+    return jsonify({"email": email, "message": "Password updated"})
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000", debug=True)

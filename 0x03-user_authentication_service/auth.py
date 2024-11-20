@@ -122,12 +122,12 @@ class Auth:
             >>> auth = Auth()
             >>> auth.valid_login("bob@hbtn.io", "pass1234")
         """
-        try:
-            user = self._db.find_user_by(email=email)
-        except Exception:  # If no user is found or email of incorrect type
+        if not user or not password:
             return False
 
-        if not password or not isinstance(password, str):
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:  # If no user is found
             return False
 
         return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
@@ -149,12 +149,15 @@ class Auth:
             >>> auth.create_session("bob@hbtn.io")
             5a006849-343e-4a48-ba4e-bbd523fcca58
         """
+        if not email:
+            return
+
         try:
             user = self._db.find_user_by(email=email)
             session_id = _generate_uuid()  # Generate session ID
             self._db.update_user(user.id, session_id=session_id)
             return session_id
-        except NoResultFound:  # If no user is found
+        except Exception:  # If no user is found or update_user fails
             return
 
     def get_user_from_session_id(self, session_id: str) -> User:
@@ -175,6 +178,9 @@ class Auth:
             >>> print(user)
             <user.User object at 0x7fd4d0caded0>
         """
+        if not session_id:
+            return
+
         try:
             user = self._db.find_user_by(session_id=session_id)
             return user
@@ -195,9 +201,55 @@ class Auth:
         Raises:
             None
         """
+        if not user_id:
+            return
+
         try:
             self._db.find_user_by(id=user_id)
             self._db.update_user(user_id, session_id=None)
             return
-        except NoResultFound:
+        except Exception:
             return
+
+    def get_reset_password_token(self, email: str) -> str:
+        """ Generates a reset password token for a user
+
+        Args:
+            email(str): User's email
+
+        Returns:
+            (str): User's reset token
+
+        Raises:
+            ValueError: If associated user is not found
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+            reset_token = _generate_uuid()
+            self._db.update_user(user.id, reset_token=reset_token)
+            return reset_token
+
+        except Exception:  # If no user is found or update_user fails
+            raise ValueError
+
+    def update_password(self, reset_token: str, password: str) -> None:
+        """ Updates a user's password
+
+        Args:
+            reset_token (str): Password reset token
+            password (str): User's new password
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If reset token does not match any registered user
+        """
+        try:
+            user = self._db.find_user_by(reset_token=reset_token)
+            hashed_password = _hash_password(password)
+            self._db.update_user(user.id, hashed_password=hashed_password)
+            return
+
+        except Exception:  # If no user is found or update_user fails
+            raise ValueError
