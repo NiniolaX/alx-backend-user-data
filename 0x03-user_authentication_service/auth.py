@@ -164,7 +164,7 @@ class Auth:
             session_id (str): Session ID
 
         Returns:
-            (obj): Corresponding user object
+            (obj): Corresponding user object or None is no user was found
 
         Raises:
             None
@@ -178,5 +178,26 @@ class Auth:
         try:
             user = self._db.find_user_by(session_id=session_id)
             return user
+        except NoResultFound:
+            return
+
+    def destroy_session(self, user_id: int) -> None:
+        """ Destroys as user's session
+
+        Updates the user's session_ID argument to None
+
+        Args:
+            (user_id): User's ID
+
+        Return:
+            None
+
+        Raises:
+            None
+        """
+        try:
+            self._db.find_user_by(id=user_id)
+            self._db.update_user(user_id, session_id=None)
+            return
         except NoResultFound:
             return

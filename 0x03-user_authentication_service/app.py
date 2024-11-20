@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """ Basic Flask App """
 from auth import Auth
-from flask import Flask, jsonify, request, abort, make_response
+from flask import Flask
+from flask import jsonify, request, abort, make_response, redirect, url_for
 from flask_cors import CORS
 
 AUTH = Auth()
@@ -58,6 +59,21 @@ def login():
     response.set_cookie("session_id", session_id)
 
     return response
+
+
+@app.route("/sessions", methods=['DELETE'], strict_slashes=False)
+def logout():
+    """ For user logout """
+    session_id = request.cookies.get('session_id')
+    if not session_id:
+        abort(401)
+
+    user = AUTH.get_user_from_session_id(session_id)
+    if not user:
+        abort(403)
+
+    AUTH.destroy_session(user.id)
+    redirect(url_for('/'))
 
 
 if __name__ == "__main__":
