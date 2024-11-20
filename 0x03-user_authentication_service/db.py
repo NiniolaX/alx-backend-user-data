@@ -43,6 +43,9 @@ class DB:
 
         Returns:
             New user
+
+        Raises:
+            None
         """
         try:
             user = User(email=email, hashed_password=hashed_password)

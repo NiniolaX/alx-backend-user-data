@@ -5,6 +5,7 @@ Classes:
     Auth: Class to interact with the authentication database
 """
 import bcrypt
+import uuid
 from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
@@ -21,6 +22,9 @@ def _hash_password(password: str) -> bytes:
         (bytes): A salted hash of the input password or None if no password
             was passed.
 
+    Raises:
+        None
+
     Example:
         >>> hashed_pwd = _hash_password("Password")
     """
@@ -31,6 +35,20 @@ def _hash_password(password: str) -> bytes:
     hash = bcrypt.hashpw(password.encode('utf-8'), salt)
 
     return hash
+
+def _generate_uuid() -> None:
+    """ Returns the string representation of a new UUID
+
+    Args:
+        None
+
+    Returns:
+        None
+
+    Raises:
+        None
+    """
+    return str(uuid.uuid4())
 
 
 class Auth:
@@ -94,13 +112,16 @@ class Auth:
         Returns:
             (bool): True if valid, otherwise, False
 
+        Raises:
+            None
+
         Example:
             >>> auth = Auth()
             >>> auth.valid_login("bob@hbtn.io", "pass1234")
         """
         try:
             user = self._db.find_user_by(email=email)
-        except Exception:  # User not found or email of incorrect type
+        except Exception:  # If user not found or email of incorrect type
             return False
 
         if not password or not isinstance(password, str):
