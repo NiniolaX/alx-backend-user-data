@@ -81,6 +81,8 @@ class Auth:
         Example:
             >>> auth = Auth()
             >>> user = auth.register_user("bob@hbtn.io", "pass1234")
+            >>> print(user)
+            <user.User object at 0x7fd4d0caded0>
         """
         if not email or not password:
             raise ValueError("Email and password is required")
@@ -153,4 +155,28 @@ class Auth:
             self._db.update_user(user.id, session_id=session_id)
             return session_id
         except NoResultFound:  # If no user is found
+            return
+
+    def get_user_from_session_id(self, session_id: str) -> User:
+        """ Returns user associated with a session ID
+
+        Args:
+            session_id (str): Session ID
+
+        Returns:
+            (obj): Corresponding user object
+
+        Raises:
+            None
+
+        Example:
+            >>> auth = Auth()
+            >>> user = auth.get_user_from_session_id("5a0068-***-***-***-**")
+            >>> print(user)
+            <user.User object at 0x7fd4d0caded0>
+        """
+        try:
+            user = self._db.find_user_by(session_id=session_id)
+            return user
+        except NoResultFound:
             return
