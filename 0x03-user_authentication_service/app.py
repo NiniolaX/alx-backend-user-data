@@ -94,7 +94,7 @@ def get_reset_password_token():
     """ Returns a user's reset password token """
     email = request.form.get('email')
     if not email:
-        abort(403)
+        return jsonify({"error": "email not provided"}), 400
 
     try:
         reset_token = AUTH.get_reset_password_token(email)
@@ -108,15 +108,15 @@ def update_password():
     """ Resets a user's password """
     email = request.form.get('email')
     if not email:
-        abort(403)
+        return jsonify({"error": "email not provided"}), 400
 
     reset_token = request.form.get('reset_token')
     if not reset_token:
-        abort(403)
+        return jsonify({"error": "reset token not provided"}), 400
 
     new_password = request.form.get('new_password')
     if not new_password:
-        abort(400)
+        return jsonify({"error": "new password not provided"}), 400
 
     AUTH.update_password(reset_token, new_password)
 
