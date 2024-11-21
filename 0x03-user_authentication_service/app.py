@@ -23,11 +23,11 @@ def users():
     """ For user registration """
     email = request.form.get('email')
     if not email:
-        return jsonify({"message": "No email provided"}), 400
+        return jsonify({"message": "email not provided"}), 400
 
     password = request.form.get('password')
     if not password:
-        return jsonify({"message": "No password provided"}), 400
+        return jsonify({"message": "password not provided"}), 400
 
     try:
         user = AUTH.register_user(email, password)
@@ -41,11 +41,11 @@ def login():
     """ For user login """
     email = request.form.get('email')
     if not email:
-        return jsonify({"message": "No email provided"}), 400
+        return jsonify({"message": "email not provided"}), 400
 
     password = request.form.get('password')
     if not password:
-        return jsonify({"message": "No password provided"}), 400
+        return jsonify({"message": "password not provided"}), 400
 
     # Validate user credentials
     if not AUTH.valid_login(email, password):
@@ -118,9 +118,11 @@ def update_password():
     if not new_password:
         return jsonify({"error": "new password not provided"}), 400
 
-    AUTH.update_password(reset_token, new_password)
-
-    return jsonify({"email": email, "message": "Password updated"})
+    try:
+        AUTH.update_password(reset_token, new_password)
+        return jsonify({"email": email, "message": "Password updated"})
+    except ValueError:  # If no user is associated with token
+        abort(403)
 
 
 if __name__ == "__main__":
