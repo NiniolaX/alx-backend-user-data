@@ -122,7 +122,7 @@ class Auth:
             >>> auth = Auth()
             >>> auth.valid_login("bob@hbtn.io", "pass1234")
         """
-        if not user or not password:
+        if not email or not password:
             return False
 
         try:

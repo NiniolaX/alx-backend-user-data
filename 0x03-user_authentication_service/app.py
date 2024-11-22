@@ -121,7 +121,7 @@ def update_password():
     try:
         AUTH.update_password(reset_token, new_password)
         return jsonify({"email": email, "message": "Password updated"})
-    except ValueError:  # If no user is associated with token
+    except ValueError:  # If no user is associated with token or token invalid
         abort(403)
 
 
